@@ -36,7 +36,15 @@ public:
 	int GetSelectedGun();
 	TArray<class AGun*> GetGuns();
 
+	void SetLifes(int16 NewLife);
+
+	int16 GetLifes();
+
+	void DarSoco();
+
 private:
+
+	void ResetPersonagem();
 
 	UPROPERTY(EditAnywhere)
 		class USpringArmComponent* CameraBoom;
@@ -59,6 +67,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> HUDMobile;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class APunch> MyPunch;
+
 	void Move(float Value);
 
 	void TouchStarted(const ETouchIndex::Type FinderIndex,
@@ -68,5 +79,8 @@ private:
 		const FVector Location);
 
 	void SwitchGun();
+
+	int16 Lifes;
 	
+	FVector InitialLocation;
 };

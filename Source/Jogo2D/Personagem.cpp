@@ -17,6 +17,7 @@
 #include "Runtime/UMG/Public/IUMGModule.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
+#include "Punch.h"
 
 APersonagem::APersonagem() {
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>
@@ -31,11 +32,15 @@ APersonagem::APersonagem() {
 	Camera->SetupAttachment(CameraBoom);
 		
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
+	Lifes = 3;
 }
 
 void APersonagem::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitialLocation = GetActorLocation();
 
 	if (Idle) {
 		GetSprite()->SetFlipbook(Idle);
@@ -73,6 +78,8 @@ void APersonagem::SetupPlayerInputComponent(UInputComponent *
 		this, &APersonagem::StopFire);
 	PlayerInputComponent->BindAction("Switch", IE_Pressed,
 		this, &APersonagem::SwitchGun);
+	PlayerInputComponent->BindAction("Punch", IE_Pressed,
+		this, &APersonagem::DarSoco);
 
 	PlayerInputComponent->BindTouch(IE_Pressed, this,
 		&APersonagem::TouchStarted);
@@ -161,6 +168,35 @@ TArray<class AGun*> APersonagem::GetGuns()
 	return Guns;
 }
 
+void APersonagem::SetLifes(int16 NewLife)
+{
+	if (NewLife <= 0) {
+		ResetPersonagem();
+	} else {
+		Lifes = NewLife;
+	}
+}
+
+int16 APersonagem::GetLifes()
+{
+	return Lifes;
+}
+
+void APersonagem::DarSoco()
+{
+	UWorld* World = GetWorld();
+	if (World != nullptr) {
+		FActorSpawnParameters SpawnParam;
+		APunch* Punch = World->SpawnActor<APunch>(MyPunch, RootComponent->GetComponentLocation(), GetSprite()->GetComponentRotation(), SpawnParam);
+	}
+}
+
+void APersonagem::ResetPersonagem()
+{
+	SetActorLocation(InitialLocation);
+	Lifes = 3;
+}
+
 void APersonagem::Move(float Value)
 {
 	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
@@ -168,16 +204,12 @@ void APersonagem::Move(float Value)
 
 void APersonagem::TouchStarted(const ETouchIndex::Type FinderIndex, const FVector Location)
 {
-
 	Jump();
-
 }
 
 void APersonagem::TouchStopped(const ETouchIndex::Type FinderIndex, const FVector Location)
 {
-
 	StopJumping();
-
 }
 
 void APersonagem::SwitchGun()

@@ -13,8 +13,10 @@ UCLASS()
 class JOGO2D_API AJogo2DGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
-	
+
+public:
+
+	AJogo2DGameModeBase();
 	
 	
 };

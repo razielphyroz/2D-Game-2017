@@ -4,32 +4,30 @@
 
 #include "CoreMinimal.h"
 #include "Enemy.h"
-#include "EnemyShooter.generated.h"
+#include "EnemySlider.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class JOGO2D_API AEnemyShooter : public AEnemy
+class JOGO2D_API AEnemySlider : public AEnemy
 {
 	GENERATED_BODY()
 
-public:
+	AEnemySlider();
 
 	void BeginPlay() override;
 
 	void Tick(float DeltaTime) override;
 
-
 private:
 
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class ABullet> MyBullet;
+	FVector InitialPos;
 
-	void Shoot();
+	int8 Direction;
 
-	FTimerHandle TurnDown;
+	void Move();
 
-	float DistanceToShoot;
-
+	float VelX;
+	
 };

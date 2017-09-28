@@ -12,19 +12,16 @@ ABullet::ABullet()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CollisionComp = CreateDefaultSubobject
-		<UBoxComponent>(TEXT("CollisionComp"));
-	CollisionComp->SetCollisionProfileName("BlockAll");
+	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComp"));
+	CollisionComp->SetCollisionProfileName("OverlapAllDynamic");
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnOverlapBegin);
 	RootComponent = CollisionComp;
 
-	Sprite = CreateDefaultSubobject
-		<UPaperFlipbookComponent>(TEXT("Sprite"));
+	Sprite = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
 	Sprite->SetCollisionProfileName("NoCollision");
 	Sprite->SetupAttachment(RootComponent);
 
-	ProjectileMovement = CreateDefaultSubobject
-		<UProjectileMovementComponent>(TEXT("Projectile"));
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile"));
 	ProjectileMovement->UpdatedComponent = RootComponent;
 	ProjectileMovement->InitialSpeed = 800.0f;
 	ProjectileMovement->MaxSpeed = 800.0f;
@@ -51,7 +48,7 @@ void ABullet::Tick(float DeltaTime)
 void ABullet::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor != nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Overlap Started. SUPERCLASS"));
+		Destroy();
 	}
 }
 

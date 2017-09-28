@@ -2,8 +2,11 @@
 
 #include "Enemy.h"
 #include "Bullet.h"
+#include "EnemyBullet.h"
 #include "PaperSpriteComponent.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
+#include "Personagem.h"
+#include "Punch.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -26,16 +29,22 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AEnemy::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (OtherActor != nullptr && OtherActor->IsA(ABullet::StaticClass())) {
-		Lifes--;
-		UE_LOG(LogTemp, Warning, TEXT("Vidas Inimigo: %d"), Lifes);
-		if (Lifes <= 0) {
-			Destroy();
+	if (OtherActor != nullptr) {
+		if (OtherActor->IsA(ABullet::StaticClass()) && (!OtherActor->IsA(AEnemyBullet::StaticClass()) || OtherActor->IsA(APunch::StaticClass()))) {
+			Lifes--;
+			UE_LOG(LogTemp, Warning, TEXT("Inimigo atingido pelo personagem..."));
+			if (Lifes <= 0) {
+				UE_LOG(LogTemp, Warning, TEXT("Inimigo morreu..."));
+				Destroy();
+			}
+		} else if (OtherActor->IsA(APersonagem::StaticClass())) {
+			APersonagem* Personagem = Cast<APersonagem>(OtherActor);
+			Personagem->SetLifes(Personagem->GetLifes() - 1);
+			UE_LOG(LogTemp, Warning, TEXT("Personagem encostou no inimigo (-1 de LIFE)"));
 		}
 	}
 }
@@ -44,6 +53,5 @@ void AEnemy::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Other
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
